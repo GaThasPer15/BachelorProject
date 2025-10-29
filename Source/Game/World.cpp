@@ -2,7 +2,7 @@
 #include <iostream>
 #include "Components/ColliderComponent.hpp"
 
-const std::string ColliderComponent::ID = "ColliderComponent";
+const std::string GTP::ColliderComponent::ID = "ColliderComponent";
 
 // RayEngine::World::~World(){
 //     for(auto entity : Entities){
@@ -52,7 +52,7 @@ void RayEngine::World::Update(const UpdateContext &context){
     }
     colliders.clear();
     for(auto &entity : Entities){
-        ColliderComponent *colliderComponent = static_cast<ColliderComponent*>(entity->GetComponent("ColliderComponent"));
+        GTP::ColliderComponent *colliderComponent = static_cast<GTP::ColliderComponent*>(entity->GetComponent("ColliderComponent"));
         if(colliderComponent){
             colliders.push_back(colliderComponent->GetCollider());
         }

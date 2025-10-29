@@ -17,9 +17,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${box2d_SOURCE_DIR}/include)
 # Link libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE
         raylib
-        box2d
-        Lua_static
-        sol2
 )
 
 # Sleep OpenGL on apple warnings (Apple thiks its outdated)

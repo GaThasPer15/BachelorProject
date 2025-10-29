@@ -69,7 +69,8 @@ void RayEngine::Game::Run(){
         };
         Update(updateContext);
         BeginDrawing();
-        glViewport(0, 0, m_WindowSize.x, m_WindowSize.y);
+        // glViewport(0, 0, m_WindowSize.x, m_WindowSize.y);
+        glViewport(0, 0, GetRenderWidth(), GetRenderHeight());
         Color c;
         c.r = 220;
         c.g = 220;
