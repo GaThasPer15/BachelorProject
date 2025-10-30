@@ -147,6 +147,12 @@ void RayEngine::Game::RenderUI(const RenderUiContext &context) const{
 }
 
 void RayEngine::Game::FKeysFunc(){
+    if(m_Input.GetKey(KeyCode::F1, InputState::Pressed)){
+        RequestLevelChange("Perlin");
+    }
+    if(m_Input.GetKey(KeyCode::F2, InputState::Pressed)){
+        RequestLevelChange("Board");
+    }
     if(m_Input.GetKey(KeyCode::F3, InputState::Pressed)){
         ShowFPS = !ShowFPS;
     }

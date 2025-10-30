@@ -50,8 +50,6 @@ namespace RayEngine{
             WorldManager *worldManager;
             bool bLevelChangeRequested;
             std::string levelToLoad;
-            Shader m_GrayscaleShader;
-            Shader m_SwimmerShader;
 
         private:
             bool ShowFPS;
