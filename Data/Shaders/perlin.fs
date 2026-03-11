@@ -45,25 +45,28 @@ float noise(vec2 coord){
 }
 
 void main(){
+    float scale = 1000.0f;
     vec2 st = (vs_out.fragTexCoord + seedCoord)/vs_out._resolution;
     vec2 uv = st * vec2(vs_out._resolution.x/vs_out._resolution.y, 1);
-    float scale = 480;
+    // vec2 uv = vs_out.fragTexCoord * vec2(vs_out._resolution.x/vs_out._resolution.y, 1.0);
     float value = noise(uv * scale * frequency) * amplitude;
 
     value *= smoothstep(0.0, 1.0, abs(uv.x-0.6));
     value = 0.5f - value;
+    // value = value * 2;
+    // value = 0.5f + 0.5 * value;
 
-    float value2 = noise(uv * scale * frequency * 1.5f) * amplitude * 1.5f;
-    value2 *= smoothstep(0.0, 1.0, abs(uv.x-0.6));
-    value = mix(value, 0.5f - value2, 0.25f);
+    // float value2 = noise(uv * scale * frequency * 1.5f) * amplitude * 1.5f;
+    // value2 *= smoothstep(0.0, 1.0, abs(uv.x-0.6));
+    // value = mix(value, 0.5f - value2, 0.5f);
 
     // value2 = noise(uv * scale * frequency * 2.5f) * amplitude * 2.0f;
     // value2 *- smoothstep(0.0, 1.0, abs(uv.x-0.6));
-    // value = mix(value, 0.5f - value2, 0.2f);
+    // value = mix(value, 0.5f - value2, 0.25f);
 
     // value2 = noise(uv * scale * frequency * 3.5f) * amplitude * 3.0f;
     // value2 *- smoothstep(0.0, 1.0, abs(uv.x-0.6));
-    // value = mix(value, 0.5f - value2, 0.1f);
+    // value = mix(value, 0.5f - value2, 0.15f);
 
     finalColor = vec4(value, value, value, 1.0);
 }

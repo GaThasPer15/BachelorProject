@@ -6,6 +6,16 @@ RayEngine::Game::Game(): lvlManager(this) {
     worldManager = new WorldManager(&world);
 }
 
+void RayEngine::Game::SetCameraBaseConfig(){
+    const Vector2 screenHalfSize = m_WindowSize * 0.5f;
+    m_RenderCamera = {
+        .offset = screenHalfSize,
+        .target = {0.0f, 0.0f},
+        .rotation = 0.0f,
+        .zoom = 1.0f
+    };
+}
+
 void RayEngine::Game::Init(const GameSpec &gameSpec){
     m_WindowSize = gameSpec.WindowSize;
     InitWindow(m_WindowSize.x, m_WindowSize.y, gameSpec.WindowTitle.c_str());
@@ -17,12 +27,7 @@ void RayEngine::Game::Init(const GameSpec &gameSpec){
     WindowSizeIndex = 0;
     
     const Vector2 screenHalfSize = m_WindowSize * 0.5f;
-    m_RenderCamera = {
-        .offset = screenHalfSize,
-        .target = {0.0f, 0.0f},
-        .rotation = 0.0f,
-        .zoom = 1.0f
-    };
+    SetCameraBaseConfig();
 
     bDebug = false;
     RegisterLevels(levels);
@@ -33,7 +38,7 @@ void RayEngine::Game::Init(const GameSpec &gameSpec){
     worldManager = new WorldManager(&world);
 
     //FPS Data
-    ShowFPS = false;
+    ShowFPS = true;
     std::string FPSData = "FPS:\nCPU frame:\nGPU frame:";
     FPSDataSize = 12;
     FramesCount = 0;
@@ -57,7 +62,8 @@ void RayEngine::Game::Run(){
     SetTargetFPS(60);
     while(m_Running && !WindowShouldClose()){
         glBeginQuery(GL_TIME_ELAPSED, gpuQueryID);
-        const double frameStartTime = GetTime();
+        // const double frameStartTime = GetTime();
+        const auto frameStartTime = std::chrono::high_resolution_clock::now();
         m_Input.Handle(m_WindowSize);
         UpdateContext updateContext = {
             .bDebug = bDebug,
@@ -98,9 +104,11 @@ void RayEngine::Game::Run(){
         glGetQueryObjecti64v(gpuQueryID, GL_QUERY_RESULT, &gpuGetTime);
         gpuTime = gpuGetTime / 1e6;
         //New Frame Calc
-        const double frameEndTime = GetTime();
-        deltaTime = frameEndTime - frameStartTime;
-        deltaTime = std::min(deltaTime, 1.0/60.0f);
+        // const double frameEndTime = GetTime();
+        const auto frameEndTime = std::chrono::high_resolution_clock::now();
+        // deltaTime = frameEndTime - frameStartTime;
+        deltaTime = std::chrono::duration_cast<std::chrono::nanoseconds>(frameEndTime - frameStartTime).count() / 1'000'000.0;
+        // deltaTime = std::min(deltaTime, 1.0/60.0f);
         glEndQuery(GL_TIME_ELAPSED);
         if(bLevelChangeRequested){
             bLevelChangeRequested = false;
@@ -147,11 +155,14 @@ void RayEngine::Game::RenderUI(const RenderUiContext &context) const{
 }
 
 void RayEngine::Game::FKeysFunc(){
-    if(m_Input.GetKey(KeyCode::F1, InputState::Pressed)){
+    if(m_Input.GetKey(KeyCode::N1, InputState::Pressed)){
         RequestLevelChange("Perlin");
     }
-    if(m_Input.GetKey(KeyCode::F2, InputState::Pressed)){
+    if(m_Input.GetKey(KeyCode::N2, InputState::Pressed)){
         RequestLevelChange("Board");
+    }
+    if(m_Input.GetKey(KeyCode::N3, InputState::Pressed)){
+        RequestLevelChange("Voronoi");
     }
     if(m_Input.GetKey(KeyCode::F3, InputState::Pressed)){
         ShowFPS = !ShowFPS;
@@ -191,8 +202,8 @@ void RayEngine::Game::FPSDataCalc(const double deltaTime){
         accumulatedTime += deltaTime;
         FramesCount++;
         if(accumulatedTime > 1.0f){
-            FPSData = "FPS: " + std::to_string(FramesCount);
-            FPSData+= "\nCPU frame: " + std::to_string((accumulatedTime/FramesCount) * 1000) + "ms";
+            FPSData = "FPS: " + std::to_string(FramesCount / accumulatedTime * 1000);
+            FPSData+= "\nCPU frame: " + std::to_string((accumulatedTime/FramesCount)) + "ms";
             FPSData += "\nGPU frame: " + std::to_string(gpuTime) + "ms";
             FramesCount = 0;
             accumulatedTime = 0;
@@ -201,6 +212,7 @@ void RayEngine::Game::FPSDataCalc(const double deltaTime){
 }
 
 void RayEngine::Game::LoadLevel(const std::string &levelName){
+    SetCameraBaseConfig();
     world.Clear();
     const Level *levelToLoad = nullptr;
     for(auto &level : levels){

@@ -29,6 +29,7 @@ namespace RayEngine{
             void Shutdown();
             void LoadLevel(const std::string &levelName);
             void RequestLevelChange(const std::string &levelName);
+            void SetCameraBaseConfig();
 
         private:
             void Update(const UpdateContext &context);

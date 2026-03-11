@@ -25,6 +25,12 @@ target_sources(${PROJECT_NAME} PRIVATE
         ${SOURCE_DIR}/Game.cpp
         ${SOURCE_DIR}/Game.h
 
+        #Graphic
+        ${SOURCE_DIR}/Graphic/perlin.cpp
+        ${SOURCE_DIR}/Graphic/perlin.h
+        ${SOURCE_DIR}/Graphic/perlinParametrs.h
+
+
         #Add animation class
         ${SOURCE_DIR}/Visuals/AnimatedSprite.cpp
         ${SOURCE_DIR}/Visuals/AnimatedSprite.h
@@ -56,3 +62,9 @@ add_custom_command(TARGET ${PROJECT_NAME}
         "${CMAKE_SOURCE_DIR}/DATA"
         "${CMAKE_BINARY_DIR}/DATA"
         )
+
+if(APPLE)
+        target_sources(${PROJECT_NAME} PRIVATE
+                ${SOURCE_DIR}/Shaders/MetalCompute.mm
+        )
+endif()

@@ -5,7 +5,7 @@ in vec4 fragColor;
 uniform sampler2D texture0;
 uniform vec4 colDiffuse;
 
-uniform vec2 hexCoord = vec2(0.0f, 0.0f);
+uniform vec2 hexCoord;
 
 out vec4 finalColor;
 

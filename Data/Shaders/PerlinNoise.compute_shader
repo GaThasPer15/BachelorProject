@@ -1,0 +1,65 @@
+#version 330
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+
+layout(rgba8, binding = 0) uniform writeonly image2D outputImage;
+layout(std430, binding = 0) readonly buffer params {
+    vec2 seed;
+    float amplitude;
+    float frequency;
+    int octave;
+    float lacunarity;
+    float persistence;
+} perlinData
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+vec2 randomGradientGen(vec2 edge){
+        edge = vec2(dot(edge*M_PI, vec2(sin(edge.x*123.4), cos(edge.y*69.47))),
+                    dot(edge/M_PI, vec2(cos(edge.y*213.7), sin(edge.x*11.25))));
+        return 2.0*fract(sin(edge*M_PI)*1770.13) - 1.0;
+}
+
+vec2 hash(vec2 point){
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p);
+}
+
+float dotGradient(vec2 point, vec2 fractal){
+    vec2 gradient = randomGradientGen(point);
+    return dot(fractal, gradient);
+}
+
+float noise(vec2 coord){
+    vec2 borderPoint = floor(coord);
+    vec2 f = fract(coord);
+    vec2 weigth = smoothstep(0.0, 1.0, f);
+
+    float n0, n1, x0, x1;
+    n0 = dotGradient(borderPoint + vec2(0.0, 0.0), f - vec2(0.0, 0.0));
+    n1 = dotGradient(borderPoint + vec2(1.0, 0.0), f - vec2(1.0, 0.0));
+    x0 = mix(n0, n1, weigth.x);
+    n0 = dotGradient(borderPoint + vec2(0.0, 1.0), f -  vec2(0.0, 1.0));
+    n1 = dotGradient(borderPoint + vec2(1.0, 1.0), f - vec2(1.0, 1.0));
+    x1 = mix(n0, n1, weigth.x);
+
+    return mix(x0, x1, weigth.y);
+}
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+void main(){
+    ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 imageSize = imageSize(outputImage);
+    if(pixelCoord.x >= imageSize.x || pixelCoord.y >= imageSize.y){
+        return;
+    }
+
+    vec2 uv = vec2(pixelCoord)/vec2(imageSize);
+    vec2 pos = uv + params.seed;
+    float scale = 480;
+    float value = noise(uv * scale * params.frequency) * params.amplitude;
+    value *= smoothstep(0.0, 1.0, abs(uv.x-0.6));
+    value = 0.5f - value;
+    imageStore(outputImage, pixelCoord, vec4(value, value, value, 1.0f));
+} 

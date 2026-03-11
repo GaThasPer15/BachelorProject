@@ -5,11 +5,12 @@
 #include "Game/Components/ColliderComponent.hpp"
 #include "Game/Components/MapComponent.hpp"
 #include "Game/Components/CameraMoveComponent.hpp"
+#include "Game/Components/VoronoiComponent.hpp"
 
 class UserGame : public RayEngine::Game{
     protected:
         void RegisterLevels(std::vector<RayEngine::Level> &outLevels) const override{
-            auto level1 = RayEngine::Level::Create("Perlin")
+            auto perlin = RayEngine::Level::Create("Perlin")
                 .WithEntity(
                     RayEngine::Entity("Plate")
                     .WithPosition(Vector2{0.0, 0.0})
@@ -18,16 +19,25 @@ class UserGame : public RayEngine::Game{
                     .WithComponent(new GTP::ColliderComponent(physic::CollisionShape::Rectangle, 500.0f, 500.0f))
                 );
 
-            auto level2 = RayEngine::Level::Create("Board")
+            auto map = RayEngine::Level::Create("Board")
             .WithEntity(
                 RayEngine::Entity("Map")
                 .WithPosition(Vector2{0.0f, 0.0f})
                 .WithRotation(0.0)
-                .WithComponent(new GTP::MapComponent(20, 15, 40))
+                .WithComponent(new GTP::MapComponent(40, 30, 30))
                 .WithComponent(new GTP::CameraMoveComponent())
             );
-            outLevels.emplace_back(level2);
-            outLevels.emplace_back(level1);
+            auto voronoi = RayEngine::Level::Create("Voronoi")
+            .WithEntity(
+                RayEngine::Entity("Plate")
+                .WithPosition(Vector2{0.0f, 0.0f})
+                .WithScale(Vector2{500.0f, 500.0f})
+                .WithRotation(0.0)
+                .WithComponent(new GPT::VoronoiComponent())
+            );
+            outLevels.emplace_back(map);
+            outLevels.emplace_back(perlin);
+            outLevels.emplace_back(voronoi);
         }
 };
 

@@ -15,9 +15,22 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${sol2_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE ${box2d_SOURCE_DIR}/include)
 
 # Link libraries
+if(APPLE)
+target_link_libraries(${PROJECT_NAME} PRIVATE
+        raylib
+        ${APPLE_FRAMEWORKS}
+)
+
+set_source_files_properties(
+        ${SOURCE_DIR}/Shaders/MetalCompute.mm
+        PROPERTIES
+        COMPILE_FLAGS "-x objective-c++ -fobjc-arc"
+)
+else()
 target_link_libraries(${PROJECT_NAME} PRIVATE
         raylib
 )
+endif()
 
 # Sleep OpenGL on apple warnings (Apple thiks its outdated)
 add_definitions(-DGL_SILENCE_DEPRECATION)

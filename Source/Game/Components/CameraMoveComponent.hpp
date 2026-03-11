@@ -39,12 +39,12 @@ namespace GTP{
                     context.Camera->target.x += (mouseCoord.x - tempCoord.x);
                     context.Camera->target.y += (mouseCoord.y - tempCoord.y);
                 }
-
+                
                 if(GetMouseWheelMove() > 0){
-                    context.Camera->zoom += 5.0f * context.DeltaTime;
+                    context.Camera->zoom<2?context.Camera->zoom += .0005f * context.DeltaTime:context.Camera->zoom=2;
                 }
                 else if(GetMouseWheelMove() < 0){
-                    context.Camera->zoom -= 5.0f * context.DeltaTime;
+                    context.Camera->zoom>0.5?context.Camera->zoom -= .0005f * context.DeltaTime:context.Camera->zoom=0.5;
                 }
             }
         private:
