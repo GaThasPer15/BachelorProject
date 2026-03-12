@@ -18,22 +18,30 @@ kernel void compute_main(
     constant uint &size [[buffer(2)]],
     constant TexSize& textureSize [[buffer(3)]],
     device uchar4* output [[buffer(4)]],
+    device float* distanceOutput [[buffor(5)]],
     uint2 gid [[thread_position_in_grid]]
     ){
     if(gid.x >= textureSize.width || gid.y >= textureSize.height){return;}
     uint index = gid.y * textureSize.width + gid.x;
 
     uint VoronoiIndex = -1;
-    float bestDistance = 100000000.0f;
+    float bestDistance = MAXFLOAT;
+    float secoundBestDistance = MAXFLOAT;
     float2 uv = float2(gid.x, gid.y) / float2(textureSize.width, textureSize.height);
     for(uint i=0; i<size; i++){
         float2 diff = points[i] - uv;
         float val = diff.x * diff.x + diff.y * diff.y;
         if(val < bestDistance){
+            secoundBestDistance = bestDistance;
             bestDistance = val;
             VoronoiIndex = i;
         }
+        else if(val < secoundBestDistance){
+            secoundBestDistance = val;
+        }
     }
-
+    float edgeDist = secoundBestDistance - bestDistance;
+    float normFactor = 1.0 / (1.0 / sqrt(float(size)));
+    distanceOutput[index] = clamp(edgeDist * sqrt(float(size)) * 2.0, 0.0, 1.0);
     output[index] = colors[VoronoiIndex];
 }

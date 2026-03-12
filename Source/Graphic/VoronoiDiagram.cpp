@@ -3,6 +3,7 @@
 Voronoi::Generator::Generator(Graphic::TextureSize _size): size(_size){
     shader = new APPLE::Shader("../DATA/Shaders/VoronoiDiagram.metal");
     shader->LoadOutputBuffer(size.width * size.height * sizeof(uint8_t) * 4, 4);
+    shader->LoadOutputBuffer(size.height * size.width * sizeof(float), 5);
     shader->LoadParametrsBuffer(size, 3);
 
     bytes.reserve(size.height * size.width * 4);
@@ -29,4 +30,10 @@ void Voronoi::Generator::Generate(Texture2D &tex, Voronoi::VoronoiData data){
 
     shader->DownloadOutputBuffer(bytes, 4);
     UpdateTexture(tex, bytes.data());
+}
+
+std::vector<float> Voronoi::Generator::GetDistanceVector(){
+    std::vector<float> data;
+    shader->DownloadOutputBuffer(data, 5);
+    return data;
 }

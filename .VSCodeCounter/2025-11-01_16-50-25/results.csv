@@ -1,8 +1,0 @@
-"filename", "language", "GLSL", "comment", "blank", "total"
-"/Users/user/Documents/Uczelnia/__Licencjat/Data/Shaders/Grayscale.fs", "GLSL", 11, 0, 3, 14
-"/Users/user/Documents/Uczelnia/__Licencjat/Data/Shaders/Grayscale.vs", "GLSL", 13, 0, 3, 16
-"/Users/user/Documents/Uczelnia/__Licencjat/Data/Shaders/RandColor.fs", "GLSL", 17, 0, 5, 22
-"/Users/user/Documents/Uczelnia/__Licencjat/Data/Shaders/RandColor.vs", "GLSL", 13, 0, 3, 16
-"/Users/user/Documents/Uczelnia/__Licencjat/Data/Shaders/perlin.fs", "GLSL", 47, 6, 16, 69
-"/Users/user/Documents/Uczelnia/__Licencjat/Data/Shaders/perlin.vs", "GLSL", 15, 0, 4, 19
-"Total", "-", 116, 6, 34, 156

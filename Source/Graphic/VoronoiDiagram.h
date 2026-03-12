@@ -24,5 +24,6 @@ namespace Voronoi{
             ~Generator();
             void SetTextureSize(Graphic::TextureSize _size);
             void Generate(Texture2D& tex, VoronoiData data);
+            std::vector<float> GetDistanceVector();
     };
 }
