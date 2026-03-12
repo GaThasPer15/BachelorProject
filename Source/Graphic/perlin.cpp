@@ -10,7 +10,7 @@ Perlin::TextureGenerator::TextureGenerator(){
     metalShader->LoadParametrsBuffer(size, 1);
 }
 
-Perlin::TextureGenerator::TextureGenerator(TextureSize size){
+Perlin::TextureGenerator::TextureGenerator(Graphic::TextureSize size){
     metalShader = new APPLE::Shader("../DATA/Shaders/PerlinNoise.metal");
     this->size = size;
     bytes.reserve(size.height * size.width * 4);
@@ -24,12 +24,12 @@ Perlin::TextureGenerator::~TextureGenerator(){
     delete metalShader;
 }
 
-void Perlin::TextureGenerator::SetTextureSize(TextureSize newSize){
+void Perlin::TextureGenerator::SetTextureSize(Graphic::TextureSize newSize){
     size = newSize;
     bytes.clear();
     bytes.reserve(size.height * size.width * 4);
 
-    metalShader->LoadOutputBuffer(size.height * size.width * sizeof(float), 2);
+    metalShader->LoadOutputBuffer(size.height * size.width * sizeof(uint8_t) * 4, 2);
     metalShader->LoadParametrsBuffer(size, 1);
 }
 

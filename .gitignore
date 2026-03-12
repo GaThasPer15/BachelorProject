@@ -2,6 +2,7 @@
 [Bb]uild/
 [Bb]in/
 [Ll]ib/
+_deps/
 
 # CMake generated files
 CMakeFiles/
@@ -22,6 +23,7 @@ Makefile
 .vs/
 .vscode/
 .idea/
+.VSCodeCounter
 *.suo
 *.user
 *.userosscache

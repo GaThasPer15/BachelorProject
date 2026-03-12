@@ -4,6 +4,7 @@
 #include <Metal/Metal.h>
 #include <Foundation/Foundation.h>
 #include "../Graphic/perlinParametrs.h"
+#include "../Graphic/GraphicParametrs.h"
 
 APPLE::Shader::Shader(const std::string& shaderPath): workGroup(16, 16, 1), threadCount(1, 1, 1), activeShader(true){
     @autoreleasepool{
@@ -260,8 +261,8 @@ template void APPLE::Shader::DownloadOutputBuffer<float>(std::vector<float>&, in
 template void APPLE::Shader::DownloadOutputBuffer<unsigned char>(std::vector<unsigned char>&, int);
 
 template void APPLE::Shader::LoadParametrsBuffer<Perlin::PerlinData>(const Perlin::PerlinData&, int);
-template void APPLE::Shader::LoadParametrsBuffer<Perlin::TextureSize>(const Perlin::TextureSize&, int);
+template void APPLE::Shader::LoadParametrsBuffer<Graphic::TextureSize>(const Graphic::TextureSize&, int);
 template void APPLE::Shader::DownloadOutputBuffer<Perlin::PerlinData>(std::vector<Perlin::PerlinData>&, int);
-template void APPLE::Shader::DownloadOutputBuffer<Perlin::TextureSize>(std::vector<Perlin::TextureSize>&, int);
+template void APPLE::Shader::DownloadOutputBuffer<Graphic::TextureSize>(std::vector<Graphic::TextureSize>&, int);
 
 #endif

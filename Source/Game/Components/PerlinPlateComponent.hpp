@@ -32,7 +32,6 @@ namespace GTP{
                 SetShaderValue(perlin, GetShaderLocation(perlin, "amplitude"), &data.amplitude, SHADER_UNIFORM_FLOAT);
                 
                 perlinPlate = LoadTextureFromImage(GenImageColor(1024, 1024, RED));
-                shader = new APPLE::Shader("../DATA/Shaders/PerlinNoise.metal");
                 texSize.width = texSize.height = 1024;
                 bytes.reserve(texSize.width*texSize.height*4);
 
@@ -149,7 +148,6 @@ namespace GTP{
                 DrawText(text.c_str(), 10, 110, 15, BLACK);
             }
             void OnDestroy() override {
-                delete shader;
                 delete perlinTexGenerator;
                 UnloadShader(perlin);
             }
@@ -167,26 +165,8 @@ namespace GTP{
             Color color = WHITE;
 
 
-            APPLE::Shader *shader;
-            Perlin::TextureSize texSize;
+            Graphic::TextureSize texSize;
             std::vector<unsigned char> bytes;
-            
-        private:
-
-            void GenPerlinMetal(){
-                #ifdef __APPLE__
-                shader->LoadParametrsBuffer(data, 0);
-                shader->LoadParametrsBuffer(texSize, 1);
-                shader->LoadOutputBuffer(1024*1024*4*sizeof(float), 2);
-                
-                shader->execute(1024, 1024);
-
-                shader->DownloadOutputBuffer(bytes, 2);
-
-                UpdateTexture(perlinPlate, bytes.data());
-
-                #endif
-            }
     };
 
 

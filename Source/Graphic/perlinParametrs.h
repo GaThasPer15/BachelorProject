@@ -3,6 +3,7 @@
 #include <iostream>
 #include "../Shaders/MetalCompute.h"
 
+
 namespace Perlin{
 
     struct PerlinData{
@@ -13,13 +14,4 @@ namespace Perlin{
         float lacunarity = 2.0f;
         float persistence = 0.5f;
     };
-
-    struct TextureSize{
-        int width = 512;
-        int height = 512;
-    };
-}
-
-namespace APPLE{
-    
 }

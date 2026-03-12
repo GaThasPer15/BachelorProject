@@ -26,8 +26,9 @@ kernel void compute_main(
     uint VoronoiIndex = -1;
     float bestDistance = 100000000.0f;
     float2 uv = float2(gid.x, gid.y) / float2(textureSize.width, textureSize.height);
-    for(int i=0; i<size; i++){
-        float val = pow((points[i].x - uv.x), 2)+pow((points[i].y - uv.y), 2);
+    for(uint i=0; i<size; i++){
+        float2 diff = points[i] - uv;
+        float val = diff.x * diff.x + diff.y * diff.y;
         if(val < bestDistance){
             bestDistance = val;
             VoronoiIndex = i;

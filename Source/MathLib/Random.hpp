@@ -21,10 +21,6 @@ namespace GTPMath{
             }
         public:
             HashRNGGenerator(uint64_t seed): seed(seed), channel(-1), isLimited(false) {}
-            int Int(int32_t x, int32_t y){
-                ++channel;
-                return static_cast<int>(hash(x, y) & 0xFFFFFFFF);
-            }
             float Float(int32_t x, int32_t y);
             Vector2 Vector2(int32_t x, int32_t y){
                 ++channel;

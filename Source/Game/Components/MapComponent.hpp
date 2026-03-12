@@ -14,6 +14,7 @@ namespace GTP{
         public:
             static const std::string ID;
             MapComponent(int Width, int Heigh, float Scale): mapWidth(Width), mapHeigh(Heigh), HexScale(Scale){
+                if(Heigh >= Width) throw std::invalid_argument("Map heigh cannot be bigger than width\n");
                 controlState = 0;
                 maxValue = 7;
                 border = 0.5f;
@@ -26,7 +27,7 @@ namespace GTP{
                 Hexagon.push_back(LoadTexture("../Data/Sprites/hexagon_hill.png"));
                 Hexagon.push_back(LoadTexture("../Data/Sprites/hexagon_desert.png"));
                 
-                Perlin::TextureSize texSize {1024, 1024};
+                Graphic::TextureSize texSize {1024, 1024};
                 generator = new Perlin::TextureGenerator(texSize);
                 
                 Image img = GenImageColor(1024, 1024, BLANK);
@@ -134,8 +135,8 @@ namespace GTP{
                     break;
                 }
                 if(context.Input->GetKey(RayEngine::KeyCode::R, RayEngine::InputState::Pressed)){
-                    data.seed.x = (rand()%1000000000)%10000;
-                    data.seed.y = (rand()%1000000000)%10000;
+                    data.seed.x = rand()%10000;
+                    data.seed.y = rand()%10000;
                     mapUpdate = true;
                 }
 
@@ -211,6 +212,25 @@ namespace GTP{
                     float normY = (tilesCoords[i].y + 0.5f * mapHeigh* HexScale) / (mapHeigh * HexScale);
                     int pixelX = std::clamp(static_cast<int>(normX * 1024), 0, 1024);
                     int pixelY = std::clamp(static_cast<int>(normY * 1024), 0, 1024);
+                    
+                    //Circle method
+                    // float value = 0;
+                    // int radius = static_cast<int>(tex.width/mapWidth/2);
+                    // int count = 0;
+                    // for(int k=pixelY-radius; k<=pixelY+radius; k++){
+                    //     for(int l=pixelX-radius; l<=pixelX+radius; l++){
+                    //         int distX = l-pixelX;
+                    //         int distY = k-pixelY;
+                    //         if(distX * distX + distY * distY <= radius*radius){
+                    //             int cx = std::clamp(l, 0, tex.width);
+                    //             int cy = std::clamp(k, 0, tex.height);
+                    //             value += MapByBytes[cy * tex.width + cx];
+                    //             ++count;
+                    //         }
+                    //     }
+                    // }
+                    // value /= count;
+                    // if(value > border){
                     if(MapByBytes.at(pixelY * 1024 + pixelX) > border){
                         type[i] = 0;
                     }

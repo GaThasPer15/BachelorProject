@@ -2,21 +2,22 @@
 #include <raylib.h>
 #include <iostream>
 #include "perlinParametrs.h"
+#include "GraphicParametrs.h"
 
 
 namespace Perlin{
     class TextureGenerator{
         public:
             TextureGenerator();
-            TextureGenerator(TextureSize size);
+            TextureGenerator(Graphic::TextureSize size);
             ~TextureGenerator();
             std::vector<float> GetBytes();
-            void SetTextureSize(TextureSize newSize);
+            void SetTextureSize(Graphic::TextureSize newSize);
             void Generate(Texture2D& tex, PerlinData data);
 
         private:
             APPLE::Shader *metalShader;
-            TextureSize size;
+            Graphic::TextureSize size;
             std::vector<unsigned char> bytes;
 
 

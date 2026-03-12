@@ -5,19 +5,9 @@
 #include "rlgl.h"
 #include "../Component.h"
 #include "../Entity.h"
-#include "../../Graphic/perlinParametrs.h"
 #include "../../Shaders/MetalCompute.h"
 #include "../../MathLib/MathLib.h"
-
-
-namespace VORONOI{
-    struct VoronoiData{
-        public:
-            Vector2 *points;
-            Color *colors;
-            size_t size;
-    };
-}
+#include "../../Graphic/VoronoiDiagram.h"
 
 namespace GPT{
     class VoronoiComponent : public RayEngine::Component{
@@ -27,20 +17,89 @@ namespace GPT{
                 Image img = GenImageColor(1024, 1024, BLANK);
                 plate = LoadTextureFromImage(img);
                 UnloadImage(img);
-                data = VORONOI::VoronoiData();
+                data = Voronoi::VoronoiData();
+                data.size = 20;
+                seed = 1;
+                maxValue = 2;
+                controlState = 0;
                 texSize = {1024, 1024};
                 
                 GenerateVoronoiData();
-                
-
-
+                generator = new Voronoi::Generator(texSize);
+                generator->Generate(plate, data);
+                updatedFlag = false;
             }
             Component *Clone() const override{
                 return new VoronoiComponent();
             }
             const std::string &GetID() const override {return ID;}
             void OnRender(const RayEngine::RenderContext &context) const override{
-                
+                RayEngine::Entity *owner = GetOwner();
+                if(owner == nullptr){
+                    std::cout << "\nOwner is nullptr\n\n";
+                }
+                float rotation = owner->GetRotation();
+                Vector2 position = owner->GetPosition();
+                Vector2 scale = owner->GetScale();
+                const Vector2 spriteSize = {1.0f * scale.x, 1.0f * scale.y};
+                const Rectangle destRect = {0, 0, spriteSize.x, spriteSize.y};
+                const Vector2 origin = {spriteSize.x * 0.5f, spriteSize.y * 0.5f};
+                const Rectangle sourceRect = {0.0f, 0.0f, 1024, 1024};
+                DrawTexturePro(plate, sourceRect, destRect, origin, rotation, WHITE);
+            }
+            void OnRenderUI(const RayEngine::RenderUiContext &context) const override{
+                std::string text = "Points amount: " + std::to_string(data.size);
+                DrawText(text.c_str(), 10, 10, 15, BLACK);
+                text = "Seed: " + std::to_string(seed);
+                DrawText(text.c_str(), 10, 30, 15, BLACK);
+            }
+            void OnUpdate(const RayEngine::UpdateContext &context) override{
+                if(context.Input->GetKey(RayEngine::KeyCode::Up, RayEngine::InputState::Pressed)){
+                    controlState==0?:controlState--;
+                }
+                else if(context.Input->GetKey(RayEngine::KeyCode::Down, RayEngine::InputState::Pressed)){
+                    controlState++;
+                    controlState%=maxValue;
+                }
+                switch(controlState){
+                    case 0:
+                        if(context.Input->GetKey(RayEngine::KeyCode::Left, RayEngine::InputState::Pressed)){
+                            if(data.size != 1){
+                                data.size--;
+                                updatedFlag = true;
+                            }
+                        }
+                        if(context.Input->GetKey(RayEngine::KeyCode::Right, RayEngine::InputState::Pressed)){
+                            data.size++;
+                            updatedFlag = true;
+                        }
+                        if(context.Input->GetKey(RayEngine::KeyCode::R, RayEngine::InputState::Pressed)){
+                            data.size = rand() % 1000;
+                            updatedFlag = true;
+                        }
+                    break;
+                    case 1:
+                        if(context.Input->GetKey(RayEngine::KeyCode::Left, RayEngine::InputState::Pressed)){
+                            if(seed != 0){
+                                seed--;
+                                updatedFlag = true;
+                            }
+                        }
+                        if(context.Input->GetKey(RayEngine::KeyCode::Right, RayEngine::InputState::Pressed)){
+                            seed++;
+                            updatedFlag = true;
+                        }   
+                        if(context.Input->GetKey(RayEngine::KeyCode::R, RayEngine::InputState::Pressed)){
+                            seed = rand() % 100000;
+                            updatedFlag = true;
+                        }
+                    break;
+                    }
+                    if(updatedFlag){
+                        GenerateVoronoiData();
+                        generator->Generate(plate, data);
+                        updatedFlag = false;
+                    }
             }
             void OnDestroy() override{
                 delete data.colors;
@@ -49,14 +108,19 @@ namespace GPT{
             }
         private:
         Texture2D plate;
-        VORONOI::VoronoiData data;
-        Perlin::TextureSize texSize;
+        Voronoi::VoronoiData data;
+        Graphic::TextureSize texSize;
+        Voronoi::Generator *generator;
 
-        APPLE::Shader *generator;
+        bool updatedFlag;
+        unsigned int seed;
+
+        int controlState;
+        int maxValue;
 
         void GenerateVoronoiData(){
-            GTPMath::Random::HashRNGGenerator *numGen = new GTPMath::Random::HashRNGGenerator(1);
-                data.size = 20;
+            GTPMath::Random::HashRNGGenerator *numGen = new GTPMath::Random::HashRNGGenerator(seed);
+                
                 if(data.points != nullptr) delete data.points;
                 data.points = new Vector2 [data.size];
                 if(data.colors != nullptr) delete data.colors;

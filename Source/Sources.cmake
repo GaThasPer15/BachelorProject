@@ -29,7 +29,9 @@ target_sources(${PROJECT_NAME} PRIVATE
         ${SOURCE_DIR}/Graphic/perlin.cpp
         ${SOURCE_DIR}/Graphic/perlin.h
         ${SOURCE_DIR}/Graphic/perlinParametrs.h
-
+        ${SOURCE_DIR}/Graphic/VoronoiDiagram.h
+        ${SOURCE_DIR}/Graphic/VoronoiDiagram.cpp
+        ${SOURCE_DIR}/Graphic/GraphicParametrs.h
 
         #Add animation class
         ${SOURCE_DIR}/Visuals/AnimatedSprite.cpp
